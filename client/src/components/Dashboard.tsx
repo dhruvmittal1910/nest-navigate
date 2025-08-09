@@ -1,19 +1,22 @@
 import { UserCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { UserProfile } from "./UserProfile"
-import {ModuleGrid} from "./ModuleGrid"
+import { ModuleGrid } from "./ModuleGrid"
 import React from "react"
+import { Activity } from "./Activity"
 
 export const Dashboard: React.FC = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const handleProfileClick = () => {
         navigate("/profile")
     }
 
-    const [progressUpdate,setProgressUpdate]=React.useState(false)
 
-    const onProgressUpdate=()=>{
-        setProgressUpdate(prev=>!prev)
+
+    const [progressUpdate, setProgressUpdate] = React.useState(false)
+
+    const onProgressUpdate = () => {
+        setProgressUpdate(prev => !prev)
     }
 
     return (
@@ -31,7 +34,12 @@ export const Dashboard: React.FC = () => {
 
             {/* user profile */}
             <div className="p-10">
-                <UserProfile refresh={progressUpdate}/>
+                <UserProfile refresh={progressUpdate} />
+            </div>
+
+            {/* recent acticity feed */}
+            <div className="p-10">
+                <Activity refresh={progressUpdate} />
             </div>
 
             {/* module grid */}
@@ -39,10 +47,7 @@ export const Dashboard: React.FC = () => {
                 <ModuleGrid onProgressUpdate={onProgressUpdate} />
             </div>
 
-            {/* recent acticity feed */}
-            <div className="p-10">
-                recent acticity feed
-            </div>
+            
 
         </div>
     )

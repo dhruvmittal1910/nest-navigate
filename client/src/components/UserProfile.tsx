@@ -40,7 +40,7 @@ export const UserProfile: React.FC<RefreshProp> = ({refresh}) => {
                     setLoading(false);
                 }
             }
-            if(!user)navigate("/")
+            if(!user && !loading)navigate("/")
 
         }
 
@@ -62,7 +62,7 @@ export const UserProfile: React.FC<RefreshProp> = ({refresh}) => {
 
     
     const handleLogout=()=>{
-        logout;
+        logout();
         navigate("/");
     }
 

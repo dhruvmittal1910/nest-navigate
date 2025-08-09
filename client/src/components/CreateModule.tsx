@@ -1,8 +1,9 @@
 
 import React, { useState } from "react"
 import { create_module } from "../api";
+import { useNavigate } from "react-router-dom";
 export const CreateModule: React.FC = () => {
-
+    const navigate=useNavigate()
     const [moduleData, setModuleData] = useState({
         title: "",
         lessons: "",
@@ -27,7 +28,7 @@ export const CreateModule: React.FC = () => {
         console.log(data)
         try {
             await create_module(data.title, data.lessons, data.total_coins, data.description)
-
+            navigate("/dashboard")
         } catch (error) {
             console.log("error in pushing form", error)
         }

@@ -23,7 +23,6 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState(null)
 
-
     useEffect(()=>{
         const token=localStorage.getItem("token")
         if(token){
@@ -38,7 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
             fetchData()
-        }   
+        }
+
     },[])
 
     const login = async (email: string, password: string) => {

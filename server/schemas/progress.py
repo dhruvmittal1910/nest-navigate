@@ -21,3 +21,11 @@ class Progress(BaseModel):
 class CompleteLesson(BaseModel):
     module_id:str
     lesson:str
+    
+class Activity(BaseModel):
+    id:str
+    activity_type:str
+    module_id:str
+    lesson_name:Optional[str]=None
+    coins_earned:int
+    timestamp:datetime

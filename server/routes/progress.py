@@ -6,7 +6,7 @@ from auth import verify_token
 from schemas.progress import CompleteLesson, Module
 # from models.progress import 
 from bson import ObjectId
-
+from uuid import uuid4
 
 router=APIRouter(prefix="/api",tags=['progress'])
 
@@ -73,8 +73,11 @@ async def create_modules(module_data:Module):
             detail="Module Title already exists"
         )
     
+    custom_id=f"module_{uuid4().hex}"
+    
     # now create new module 
     new_module={
+        "id":custom_id,
         "title":module_data.title,
         "lessons":module_data.lessons,
         "total_coins":module_data.total_coins,
@@ -122,7 +125,8 @@ async def get_progress_user(user_id:str,user_email:str=Depends(verify_token)):
 
 @router.post("/progress/complete-lesson")
 async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(verify_token)):
-    
+    # lesson_data contains module id and lesson name
+    # push the lesson name to lessons_completed
     db=get_database()
     print("complete-lesson post request",user_email, lesson_data)
     # Get user data
@@ -137,8 +141,8 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
     
     # find the module 
     module=None
-    
-    for m in SAMPLE_MODULES:
+    module_data=await db.modules.find().to_list(length=None)
+    for m in module_data:
         if m["id"]==lesson_data.module_id:
             module=m
             break
@@ -174,14 +178,14 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
         progress_data=await db.progress.find_one({"_id":result.inserted_id})
         
     # add lesson to completed if not 
-    lesson_completed=progress_data.get("lesson_completed",[])
+    lessons_completed=progress_data.get("lessons_completed",[])
 
-    if lesson_data.lesson not in lesson_completed:
-        lesson_completed.append(lesson_data.lesson)
+    if lesson_data.lesson not in lessons_completed:
+        lessons_completed.append(lesson_data.lesson)
         
         #calc the percentage
         total=len(module["lessons"])
-        percentage=(len(lesson_completed)/total)*100
+        percentage=(len(lessons_completed)/total)*100
         
         coins_per_lesson=module["total_coins"]//total
         
@@ -190,7 +194,7 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
             {"user_id":user_id,"module_id":lesson_data.module_id},
             {
                 "$set":{
-                    "lesson_completed":lesson_completed,
+                    "lessons_completed":lessons_completed,
                     "completion_percentage":round(percentage,1),
                     "last_accessed":datetime.now(timezone.utc)
                 }
@@ -205,4 +209,49 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
                 "coins_earned":coins_per_lesson
             }}
         )
+        print("lesson_data->",lesson_data.lesson)
+        # log the activity
+        activity_data={
+            "user_id":user_id,
+            "activity_type":"lesson_completed",
+            "module_id":lesson_data.module_id,
+            "lesson_name":lesson_data.lesson,
+            "coins_earned":coins_per_lesson,
+            "timestamp":datetime.now()
+        }
         
+        await db.activities.insert_one(activity_data)
+        print("inserted actictiy_data in /activity route")
+        
+        return {
+            "message": "Lesson completed successfully",
+            "coins_earned": coins_per_lesson,
+            "completion_percentage": round(percentage, 1)
+        }
+    
+    return {"message":"lesson already completed"}
+
+
+@router.get("/activity/{user_id}")
+async def get_user_activity(user_id:str,user_email:str=Depends(verify_token)):
+    
+    db=get_database()
+    print("Step-1", user_id,user_email)
+    # verifiy the user first
+    user_data=await db.users.find_one({"email":user_email.lower()})
+    print(user_data,"->user_data")
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied"
+        )
+    # get the activity
+    activity_data = await db.activities.find(
+        {"user_id": user_id}
+    ).sort("timestamp", -1).to_list(length=None)
+    
+    for activity in activity_data:
+        activity["_id"] = str(activity["_id"])
+        
+    return activity_data
+    

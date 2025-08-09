@@ -130,3 +130,23 @@ export const updateProgress=async(user_id:string)=>{
 
     return await response.json();
 }
+
+
+export const getUserActivity=async(user_id:string)=>{
+    const token=localStorage.getItem("token")
+    console.log(user_id,"->got from get user activity")
+
+    const response=await fetch(`${url}/api/activity/${user_id}`,{
+        method:"GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch user activity data");
+    }
+
+    return await response.json();
+}
