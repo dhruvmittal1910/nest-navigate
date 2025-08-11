@@ -35,7 +35,7 @@ export const UserProfile: React.FC<RefreshProp> = ({refresh}) => {
                     const userDetails = await getUserProfile()
                     setProfileData(userDetails)
                 } catch (error) {
-                    console.log(error, "error in fetching profile")
+                    console.error(error, "error in fetching profile")
                 } finally {
                     setLoading(false);
                 }

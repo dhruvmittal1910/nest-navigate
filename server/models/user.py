@@ -11,7 +11,7 @@ class UserInDb(BaseModel):
     username:str
     password:str
     coins_earned:int=0
-    created_at:datetime=Field(default_factory=datetime.now(timezone.utc))
+    created_at:datetime=Field(default_factory=datetime.now().astimezone() )
     
     class Config:
         populate_by_name=True

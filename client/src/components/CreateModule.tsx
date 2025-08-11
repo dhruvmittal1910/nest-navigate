@@ -25,12 +25,12 @@ export const CreateModule: React.FC = () => {
             total_coins: Number(moduleData.total_coins),
             description: moduleData.description
         };
-        console.log(data)
+       
         try {
             await create_module(data.title, data.lessons, data.total_coins, data.description)
             navigate("/dashboard")
         } catch (error) {
-            console.log("error in pushing form", error)
+            console.error("error in pushing form", error)
         }
 
     }

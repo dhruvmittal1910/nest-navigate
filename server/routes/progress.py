@@ -95,7 +95,6 @@ async def create_modules(module_data:Module):
 # get progress data for the user
 @router.get("/progress/{user_id}")
 async def get_progress_user(user_id:str,user_email:str=Depends(verify_token)):
-    print(user_id,"user_id")
     db=get_database()
     # verify if user exists or has permissions
     user_doc=await db.users.find_one({"email":user_email.lower()})
@@ -128,7 +127,6 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
     # lesson_data contains module id and lesson name
     # push the lesson name to lessons_completed
     db=get_database()
-    print("complete-lesson post request",user_email, lesson_data)
     # Get user data
     user_doc = await db.users.find_one({"email": user_email.lower()})
     if not user_doc:
@@ -174,7 +172,6 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
         
         # insert it into the database
         result=await db.progress.insert_one(progress_data)
-        print(result)
         progress_data=await db.progress.find_one({"_id":result.inserted_id})
         
     # add lesson to completed if not 
@@ -196,7 +193,7 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
                 "$set":{
                     "lessons_completed":lessons_completed,
                     "completion_percentage":round(percentage,1),
-                    "last_accessed":datetime.now(timezone.utc)
+                    "last_accessed":datetime.now().astimezone() 
                 }
             }
         )
@@ -209,7 +206,6 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
                 "coins_earned":coins_per_lesson
             }}
         )
-        print("lesson_data->",lesson_data.lesson)
         # log the activity
         activity_data={
             "user_id":user_id,
@@ -217,11 +213,10 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
             "module_id":lesson_data.module_id,
             "lesson_name":lesson_data.lesson,
             "coins_earned":coins_per_lesson,
-            "timestamp":datetime.now(timezone.utc)
+            "timestamp":datetime.now().astimezone() 
         }
         
         await db.activities.insert_one(activity_data)
-        print("inserted actictiy_data in /activity route")
         
         return {
             "message": "Lesson completed successfully",
@@ -236,10 +231,8 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
 async def get_user_activity(user_id:str,user_email:str=Depends(verify_token)):
     
     db=get_database()
-    print("Step-1", user_id,user_email)
     # verifiy the user first
     user_data=await db.users.find_one({"email":user_email.lower()})
-    print(user_data,"->user_data")
     if not user_data:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

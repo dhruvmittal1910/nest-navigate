@@ -10,7 +10,9 @@ export const loginUser = async (email: string, password: string) => {
     })
 
     if (!response.ok) {
-        console.log(response, "login failed")
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || "Login failed. Please check your credentials.";
+        throw new Error(errorMessage);
     }
     return response.json()
 }
@@ -23,22 +25,25 @@ export const registerUser = async (username: string, email: string, password: st
     })
 
     if (!response.ok) {
-        console.log(response, "registration failed")
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || "Registering User failed. Please check your connection.";
+        throw new Error(errorMessage);
     }
     return response.json()
 }
 
 
-export const create_module=async(title:string,lessons:string[],total_coins:number,description:string)=>{
-    console.log(JSON.stringify({title,lessons,total_coins,description}))
-    const response= await fetch(`${url}/api/create_modules`,{
-        method:"POST",
+export const create_module = async (title: string, lessons: string[], total_coins: number, description: string) => {
+    const response = await fetch(`${url}/api/create_modules`, {
+        method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body:JSON.stringify({title,lessons,total_coins,description})
+        body: JSON.stringify({ title, lessons, total_coins, description })
     })
 
     if (!response.ok) {
-        console.log(response, "cannot create a module")
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || "Cannot create a module";
+        throw new Error(errorMessage);
     }
     return response.json()
 }
@@ -71,7 +76,7 @@ export const getProgressData = async (user_id: string) => {
     })
 
     if (!response.ok) {
-        throw new Error("Failed to fetch module data");
+        throw new Error("Failed to fetch progress data");
     }
 
     return await response.json();
@@ -91,18 +96,17 @@ export const getModuleData = async () => {
     return await response.json();
 }
 
-export const completeLesson=async(module_id:string,lesson:string)=>{
-    console.log("calling completeLesson route->",module_id,lesson)
+export const completeLesson = async (module_id: string, lesson: string) => {
     const token = localStorage.getItem("token")
-    const response=await fetch(`${url}/api/progress/complete-lesson`,{
-        method:"POST",
+    const response = await fetch(`${url}/api/progress/complete-lesson`, {
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
         },
-        body:JSON.stringify({
-            module_id:module_id,
-            lesson:lesson
+        body: JSON.stringify({
+            module_id: module_id,
+            lesson: lesson
         })
     })
 
@@ -113,10 +117,9 @@ export const completeLesson=async(module_id:string,lesson:string)=>{
     return await response.json();
 }
 
-export const updateProgress=async(user_id:string)=>{
-    console.log("calling to update user progress route")
-    const token=localStorage.getItem("token")
-    const response=await fetch(`${url}/api/progress/${user_id}`,{
+export const updateProgress = async (user_id: string) => {
+    const token = localStorage.getItem("token")
+    const response = await fetch(`${url}/api/progress/${user_id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -125,19 +128,18 @@ export const updateProgress=async(user_id:string)=>{
     })
 
     if (!response.ok) {
-        throw new Error("Failed to fetch completed lesson data");
+        throw new Error("Failed to fetch progress lesson data");
     }
 
     return await response.json();
 }
 
 
-export const getUserActivity=async(user_id:string)=>{
-    const token=localStorage.getItem("token")
-    console.log(user_id,"->got from get user activity")
+export const getUserActivity = async (user_id: string) => {
+    const token = localStorage.getItem("token")
 
-    const response=await fetch(`${url}/api/activity/${user_id}`,{
-        method:"GET",
+    const response = await fetch(`${url}/api/activity/${user_id}`, {
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`

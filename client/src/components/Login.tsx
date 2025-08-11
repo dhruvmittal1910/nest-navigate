@@ -21,13 +21,11 @@ export const Login: React.FC = () => {
         e.preventDefault();
         setError('');
         setLoading(true);
-        console.log('Form submitted');
         // simulate login/register logic
 
         // if islogin is true then do login flow else do register flow
         try {
             if (isLogin) {
-                console.log("login flow")
                 if (!formData.email.includes("@")) {
                     alert("Please enter a valid email address");
                     return;
@@ -35,13 +33,12 @@ export const Login: React.FC = () => {
                 await login(formData.email, formData.password)
                 // redirect to dashboard page after successful login
             } else {
-                console.log("register flow")
                 await register(formData.username, formData.email, formData.password)
                 // redirect to dashboard page after successful login
             }
             navigate("/dashboard")
         } catch (error) {
-            console.log(error)
+            console.error(error)
         } finally {
             setLoading(false);
         }

@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     const userProfile=await getUserProfile()
                     setUser(userProfile)
                 }catch(error){
-                    console.log("error fetching user data in auth.tsx")
+                    console.error("error fetching user data in auth.tsx")
                     localStorage.removeItem("token");
                     setUser(null);
                 }
@@ -43,7 +43,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         const data = await loginUser(email, password)
-        console.log(data)
         // store the token in localStorage
         // token is at index 0 and user info at index 1
         localStorage.setItem("token", data[0])
@@ -59,7 +58,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = () => {
-        console.log("calling logout function")
         localStorage.removeItem("token")
         setUser(null)
     }

@@ -51,7 +51,6 @@ async def register_user(user_data:UserCreate):
     
     # check if user already exists
     existing_user=await db.users.find_one({"email":user_data.email.lower()})
-    print(existing_user,"existing_user")
     if existing_user:
         #means found the email
         raise HTTPException(
@@ -112,7 +111,6 @@ async def login_user(login_data:UserLogin):
     token=create_token(
         data={"sub":login_data.email},expires_delta=token_expires
     )
-    print("logged in")
     user_details=User(
         id=str(user_doc["_id"]),
         email=user_doc["email"],
@@ -127,7 +125,6 @@ async def login_user(login_data:UserLogin):
 # get the profile information
 @router.get("/profile")
 async def get_profile_date(user_email:str = Depends(verify_token)):
-    print("calling get profile route")
     db=get_database()
     
     # get user data

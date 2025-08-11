@@ -39,15 +39,13 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({onProgressUpdate}) => {
                 try {
                     // make api calls here
                     const moduleData = await getModuleData()
-                    console.log(moduleData)
                     setModules(moduleData)
                     // get progress data for the user
                     const progressData = await getProgressData(user["id"])
-                    console.log(progressData)
                     setProgress(progressData)
 
                 } catch (error) {
-                    console.log(error, "error fetching data")
+                    console.error(error, "error fetching data")
                 } finally {
                     setLoading(false)
                 }
@@ -61,20 +59,18 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({onProgressUpdate}) => {
     }
 
     const startLesson = async (module_id: string, lesson: string) => {
-        console.log(module_id,lesson," -> start lesson button clicked")
         if (!user) return;
         try {
             const result = await completeLesson(module_id, lesson)
             console.log(result,"completed_lesson")
             const updatedProgress = await updateProgress(user["id"])
-            console.log(updatedProgress,"updated_progress")
             setProgress(updatedProgress)
             // updating the progress on whole module , change in lessons might happen
 
             onProgressUpdate(); //calling this to update the user profile like the modules.
  
         } catch (error) {
-            console.log("error updating the lesson in modules", error)
+            console.error("error updating the lesson in modules", error)
         }
     }
     if (loading) return <p>Loading modules...</p>;
@@ -95,7 +91,6 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({onProgressUpdate}) => {
             <div className="grid md:grid-cols-2 gap-4">
                 {modules.map(module => {
                     const moduleProgress = getModuleProgress(module.id);
-                    console.log(moduleProgress)
                     const completedLessons = moduleProgress?.lessons_completed || [];
                     const completion = moduleProgress?.completion_percentage || 0;
                     const isCompleted = completion === 100

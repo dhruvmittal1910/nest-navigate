@@ -24,15 +24,15 @@ async def connect_to_database():
 
         # Send a ping to confirm a successful connection
         await db.client.admin.command('ping')
-        print("✅ Pinged your deployment. You successfully connected to MongoDB!")
+        print(" You successfully connected to MongoDB!")
     except Exception as e:
-        print("❌ Failed to connect to MongoDB:", e)
+        print(" Failed to connect to MongoDB:", e)
 
 async def close_mongo_connection():
     """Close database connection"""
     if db.client:
         db.client.close()
-        print("📡 Disconnected from MongoDB")
+        print(" Disconnected from MongoDB")
 
 def get_database():
     """Get database instance"""

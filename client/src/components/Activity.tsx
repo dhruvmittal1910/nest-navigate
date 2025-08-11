@@ -30,10 +30,9 @@ export const Activity: React.FC<ActivityProps> = ({ refresh }) => {
                 // call activity api
                 try {
                     const result = await getUserActivity(user["id"])
-                    console.log(result)
                     setActivities(result)
                 } catch (error) {
-                    console.log("error fetching activities", error)
+                    console.error("error fetching activities", error)
                 }
             }
         }
