@@ -193,7 +193,7 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
                 "$set":{
                     "lessons_completed":lessons_completed,
                     "completion_percentage":round(percentage,1),
-                    "last_accessed":datetime.now().astimezone() 
+                    "last_accessed":datetime.now()
                 }
             }
         )
@@ -213,7 +213,7 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
             "module_id":lesson_data.module_id,
             "lesson_name":lesson_data.lesson,
             "coins_earned":coins_per_lesson,
-            "timestamp":datetime.now().astimezone() 
+            "timestamp":datetime.now()
         }
         
         await db.activities.insert_one(activity_data)
