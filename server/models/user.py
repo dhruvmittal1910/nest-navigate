@@ -1,6 +1,6 @@
 from pydantic import BaseModel,Field,EmailStr
 from typing import Optional
-from datetime import datetime
+from datetime import datetime,timezone
 from bson import ObjectId
 
 
@@ -11,7 +11,7 @@ class UserInDb(BaseModel):
     username:str
     password:str
     coins_earned:int=0
-    created_at:datetime=Field(default_factory=datetime.utcnow)
+    created_at:datetime=Field(default_factory=datetime.now(timezone.utc))
     
     class Config:
         populate_by_name=True

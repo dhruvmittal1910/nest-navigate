@@ -217,7 +217,7 @@ async def complete_lesson(lesson_data:CompleteLesson,user_email:str=Depends(veri
             "module_id":lesson_data.module_id,
             "lesson_name":lesson_data.lesson,
             "coins_earned":coins_per_lesson,
-            "timestamp":datetime.now()
+            "timestamp":datetime.now(timezone.utc)
         }
         
         await db.activities.insert_one(activity_data)

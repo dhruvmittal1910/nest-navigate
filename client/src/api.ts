@@ -1,6 +1,6 @@
 // calling the login and register apis
 
-export const url = "http://127.0.0.1:8000"
+export const url = "https://nest-navigate-x1t5.onrender.com"
 
 export const loginUser = async (email: string, password: string) => {
     const response = await fetch(`${url}/api/users/login`, {

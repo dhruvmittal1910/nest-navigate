@@ -1,4 +1,4 @@
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,timezone
 from fastapi import HTTPException,status, Depends
 from jose import JWTError,jwt
 from passlib.context import CryptContext
@@ -26,9 +26,9 @@ def verify_password(password:str,hased_password:str):
 def create_token(data:dict,expires_delta:timedelta=timedelta(hours=1)):
     to_encode=data.copy()
     if expires_delta:
-        expire=datetime.utcnow()+expires_delta
+        expire=datetime.now(timezone.utc)+expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=access_token_expires)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=access_token_expires)
     
     to_encode.update({"exp":expire})
     return jwt.encode(to_encode,SECRET_KEY,algorithm=ALGO)
